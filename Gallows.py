@@ -6,6 +6,7 @@ sims = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 
 word = random.choice(spis_word)
 finish = True
 used_sims = []
+kolvo = 0
 
 
 def num_sims(wordd, simm):
@@ -40,8 +41,9 @@ while finish:
 
     elif sim in used_sims:
         print("Вы уже использовали этот символ")
-    elif sim in sims:
+    elif sim.lower() in sims:
         if sim.lower() in word.lower():
+            kolvo = 0
             spis = num_sims(word, sim.lower())
             frm = vis(frm, spis, sim)
             used_sims.append(sim.lower())
@@ -51,8 +53,13 @@ while finish:
             else:
                 print(frm)
         else:
-            used_sims.append(sim.lower())
-            print("Этой буквы нет в слове :( Попробуйте еще раз ")
+            if kolvo == 3:
+                print(f"Вы пробовали слишком много раз :) Я загадывала слово '{word}'.")
+                finish = False
+            else:
+                used_sims.append(sim.lower())
+                kolvo += 1
+                print("Этой буквы нет в слове :( Попробуйте еще раз ")
 
     else:
         print('ОШИБКА!! Введите ОДНУ букву на кирилице')
