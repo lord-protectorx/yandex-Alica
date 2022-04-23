@@ -79,14 +79,14 @@ def game():
         sim = request.json["request"]["command"]
         if sim.lower() == 'я сдаюсь':
             default_game_data.finish = False
-            return (f"Жаль...:( Я загадывала слово '{default_game_data.word}'", False)
+            return f"Жаль...:( Я загадывала слово '{default_game_data.word}'", False
 
         elif sim.lower() == default_game_data.word.lower():
             default_game_data.finish = False
-            return ("Поздравляю!! Ты угадал слово. МОЛОДЕЦ", False)
+            return "Поздравляю!! Ты угадал слово. МОЛОДЕЦ", False
 
         elif sim in default_game_data.used_sims:
-            return ("Вы уже использовали этот символ", True)
+            return "Вы уже использовали этот символ", True
         elif sim.lower() in default_game_data.sims:
             if sim.lower() in default_game_data.word.lower():
                 default_game_data.kolvo = 0
@@ -94,25 +94,23 @@ def game():
                 default_game_data.frm = vis(default_game_data.frm, spis, sim)
                 default_game_data.used_sims.append(sim.lower())
                 if "_" not in default_game_data.frm:
-                    finish = False
-                    return (f"Поздравляю!! Я загадывала слово '{default_game_data.word}'", False)
+                    default_game_data.finish = False
+                    return f"Поздравляю!! Я загадывала слово '{default_game_data.word}'", False
 
                 else:
-                    return (default_game_data.frm, True)
+                    return default_game_data.frm, True
             else:
                 if default_game_data.kolvo == 3:
-                    finish = False
-                    return (f"Вы пробовали слишком много раз :) Я загадывала слово '{default_game_data.word}'.", False)
+                    default_game_data.finish = False
+                    return f"Вы пробовали слишком много раз :) Я загадывала слово '{default_game_data.word}'.", False
 
                 else:
                     default_game_data.used_sims.append(sim.lower())
                     default_game_data.kolvo += 1
-                    return ("Этой буквы нет в слове :( Попробуйте еще раз ", True)
+                    return "Этой буквы нет в слове :( Попробуйте еще раз ", True
 
         else:
-            return ('ОШИБКА!! Введите ОДНУ букву на кирилице', True)
-
-
+            return 'ОШИБКА!! Введите ОДНУ букву на кирилице', True
 
 
 if __name__ == '__main__':
