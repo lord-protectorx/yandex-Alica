@@ -14,7 +14,8 @@ word = random.choice(spis_word)
 finish = True
 used_sims = []
 kolvo = 0
-
+frm = "".ljust(len(word), "_")
+print(word)
 
 @app.route('/post', methods=['POST'])
 def handler():
@@ -32,12 +33,14 @@ def handler():
     handle_dialog(response, request.json)
     return response
 
-def handle_dialog(resp, reqst, context=True):
+def handle_dialog(resp, reqst):
     # проверка, что это не первое сообщение
     if reqst['request']['original_utterance']:
-        resp['response']['text'] = game()
-        if context is False:
+        game_data = game()
+        resp['response']['text'] = game_data[0]
+        if game_data[1] is False:
             resp['response']['end_session'] = True
+
     else:
         # если сообщений до этого не было
         resp['response']['text'] = 'Привет! Давай сыграем в виселицу с городами.' \
@@ -46,7 +49,7 @@ def handle_dialog(resp, reqst, context=True):
 
 def game():
     # долбаные глобалы
-    global finish, kolvo
+    global finish, kolvo, frm
 
     def num_sims(wordd, simm):
         wordd = wordd.lower()
@@ -65,7 +68,6 @@ def game():
             form[lis_t[i]] = simv
         return ''.join(form)
 
-    frm = "".ljust(len(word), "_")
     while finish:
         sim = request.json["request"]["command"]
         if sim.lower() == 'я сдаюсь':
@@ -74,10 +76,10 @@ def game():
 
         elif sim.lower() == word.lower():
             finish = False
-            return ("Поздравляю!! Ты угадал слово. Получи подарок - 🎁", False)
+            return ("Поздравляю!! Ты угадал слово. МОЛОДЕЦ", False)
 
         elif sim in used_sims:
-            return "Вы уже использовали этот символ"
+            return ("Вы уже использовали этот символ", True)
         elif sim.lower() in sims:
             if sim.lower() in word.lower():
                 kolvo = 0
@@ -86,10 +88,10 @@ def game():
                 used_sims.append(sim.lower())
                 if "_" not in frm:
                     finish = False
-                    return (f"Поздравляю!! Я загадывала слово '{word}' Получи подарок - 🎁", False)
+                    return (f"Поздравляю!! Я загадывала слово '{word}'", False)
 
                 else:
-                    return (frm)
+                    return (frm, True)
             else:
                 if kolvo == 3:
                     finish = False
@@ -98,10 +100,10 @@ def game():
                 else:
                     used_sims.append(sim.lower())
                     kolvo += 1
-                    return ("Этой буквы нет в слове :( Попробуйте еще раз ")
+                    return ("Этой буквы нет в слове :( Попробуйте еще раз ", True)
 
         else:
-            return ('ОШИБКА!! Введите ОДНУ букву на кирилице')
+            return ('ОШИБКА!! Введите ОДНУ букву на кирилице', True)
 
 
 
