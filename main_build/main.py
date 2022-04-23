@@ -20,7 +20,7 @@ print(word)
 @app.route('/post', methods=['POST'])
 def handler():
 
-    with open('file.json', 'w') as file:
+    with open('../data/last request.json', 'w') as file:
         json.dump(request.json, file)
 
     response = {

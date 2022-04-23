@@ -2,7 +2,6 @@ from flask import Flask
 from flask import request
 import json
 import index
-import random
 
 app = Flask(__name__)
 
