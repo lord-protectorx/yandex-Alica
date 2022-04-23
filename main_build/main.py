@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 import json
 import random
+from main_build.functions import *
 
 
 app = Flask(__name__)
@@ -10,10 +11,10 @@ app = Flask(__name__)
 class GameData():
     def __init__(self):
         # данные для игры
-        self.spis_word = ["Горилла", "Человек", "Время", "Жизнь", "Вопрос", "Ребенок", "Конец", "Система", "Начало"]
+        self.spis_word = collecting_cities_and_countries()
         self.sims = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
                      'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я']
-        self.word = random.choice(self.spis_word)
+        self.word = random.choice(list(self.spis_word.keys()))
         self.finish = True
         self.used_sims = []
         self.kolvo = 0
