@@ -1,3 +1,6 @@
+import json
+
+
 def collecting_cities_and_countries():
     dic = {}
     deleting_list = []
@@ -24,3 +27,21 @@ def collecting_cities_and_countries():
         del dic[i]
 
     return dic
+
+
+def write_user(user_name, town):
+    flag = False
+    new_data = {'name': user_name, 'towns': [town]}
+    try:
+        data = json.load(open('users.json'))
+    except:
+        data = []
+    for dict_ in data:
+        if dict_['name'] == user_name:
+            dict_['towns'].append(town)
+            flag = True
+    if not flag:
+        data.append(new_data)
+    print(data)
+    with open('users.json', 'w') as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
