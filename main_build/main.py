@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import request
-import json
 import random
 from main_build.functions import *
 
@@ -14,11 +13,9 @@ class GameData:
         self.spis_word = collecting_cities_and_countries()
         self.sims = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т',
                      'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я']
-        self.word = random.choice(list(self.spis_word.keys()))
         self.finish = True
         self.used_sims = []
         self.kolvo = 0
-        self.frm = "".ljust(len(self.word), "_")
         self.sessionStorage = {}
         self.reg_flag = False
         self.user_id = 0
@@ -54,7 +51,6 @@ def handle_dialog(resp, reqst):
         resp['response']['text'] = game_result[0]
         if game_result[1] is False:
             resp['response']['end_session'] = True
-        print("Не первый раз")
     else:
         # если сообщений до этого не было
         user_id = reqst['session']['user_id']
@@ -66,14 +62,9 @@ def handle_dialog(resp, reqst):
             default_game_data.sessionStorage[user_id] = {
                 'first_name': None
             }
-            print(default_game_data.sessionStorage)
-            print("Первый раз1")
             return
         # не новый пользователь
-        print(default_game_data.sessionStorage)
         if default_game_data.sessionStorage[user_id]['first_name'] is None:
-            print("Первый раз")
-            print(default_game_data.sessionStorage)
             # в последнем его сообщение ищем имя.
             frs_name = first_name(reqst)
             # если не нашли, то сообщаем пользователю что не расслышали.
@@ -87,6 +78,8 @@ def handle_dialog(resp, reqst):
                               + frs_name.title() \
                               + '. Я - Алиса. Давай сыграем в виселицу с городами.' \
                                 'Я загадал слово, можем начинать. Чтобы завершить, напишите "я сдаюсь"'
+                default_game_data.word = choose_city(default_game_data.user_id)
+                default_game_data.frm = "".ljust(len(default_game_data.word), "_")
                 default_game_data.name = frs_name.title()
                 default_game_data.reg_flag = True
 
@@ -110,9 +103,6 @@ def game():
         for i in range(len(lis_t)):
             form[lis_t[i]] = simv
         return ''.join(form)
-
-    def save_city(name, capital):
-        pass
 
     while default_game_data.finish:
         sim = request.json["request"]["command"]
