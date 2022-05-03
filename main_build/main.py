@@ -49,14 +49,14 @@ def handle_dialog(resp, reqst):
     if reqst['request']['original_utterance'] and default_game_data.reg_flag is True:
         game_result = game()
         resp['response']['text'] = game_result[0]
-        resp['response']['card'] = {
-            "type": "BigImage",
-            "image_id": game_result[2],
-            "title": default_game_data.word,
-            # "description": "Описание изображения.",
-        }
         if game_result[1] is False:
             resp['response']['end_session'] = True
+            resp['response']['card'] = {
+                "type": "BigImage",
+                "image_id": game_result[2],
+                "title": default_game_data.word,
+                # "description": "Описание изображения.",
+            }
     else:
         # если сообщений до этого не было
         user_id = reqst['session']['user_id']
