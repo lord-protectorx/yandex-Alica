@@ -43,7 +43,6 @@ def write_user(user_name, town):
             flag = True
     if not flag:
         data.append(new_data)
-    print(data)
     with open('users.json', 'w') as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
@@ -65,3 +64,8 @@ def choose_city(user_id):
     except:
         word = random.choice(list(spis_word.keys()))
         return word
+
+def finding_photo_id(city_name):
+    with open('../data/keys of photos.json', 'r', encoding='utf8') as file:
+        id = json.load(file)
+        return id[city_name]

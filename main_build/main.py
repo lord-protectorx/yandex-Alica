@@ -46,9 +46,15 @@ def first_name(reqst):
 def handle_dialog(resp, reqst):
     global default_game_data
     # проверка, что это не первое сообщение
-    if reqst['request']['original_utterance'] and default_game_data.reg_flag == True:
+    if reqst['request']['original_utterance'] and default_game_data.reg_flag is True:
         game_result = game()
         resp['response']['text'] = game_result[0]
+        resp['response']['card'] = {
+            "type": "BigImage",
+            "image_id": game_result[2],
+            "title": default_game_data.word,
+            # "description": "Описание изображения.",
+        }
         if game_result[1] is False:
             resp['response']['end_session'] = True
     else:
@@ -72,7 +78,6 @@ def handle_dialog(resp, reqst):
                 resp['response']['text'] = 'Не расслышала имя. Повтори, пожалуйста!'
             # если нашли, то приветствуем пользователя.
             else:
-                print("ff")
                 default_game_data.sessionStorage[user_id]['first_name'] = frs_name
                 resp['response'][
                     'text'] = 'Приятно познакомиться, ' \
@@ -80,6 +85,7 @@ def handle_dialog(resp, reqst):
                               + '. Я - Алиса. Давай сыграем в виселицу с городами.' \
                                 'Я загадал слово, можем начинать. Чтобы завершить, напишите "я сдаюсь"'
                 default_game_data.word = choose_city(default_game_data.user_id)
+                print(default_game_data.word)
                 default_game_data.frm = "".ljust(len(default_game_data.word), "_")
                 default_game_data.name = frs_name.title()
                 default_game_data.reg_flag = True
@@ -107,15 +113,16 @@ def game():
 
     while default_game_data.finish:
         sim = request.json["request"]["command"]
+        photo_id = finding_photo_id(default_game_data.word)
         if sim.lower() == 'я сдаюсь':
             default_game_data.finish = False
             write_user(default_game_data.user_id, default_game_data.word)
-            return f"Жаль...:( Я загадывала слово '{default_game_data.word}'", False
+            return f"Жаль...:( Я загадывала слово '{default_game_data.word}'", False, photo_id
 
         elif sim.lower() == default_game_data.word.lower():
             default_game_data.finish = False
             write_user(default_game_data.user_id, default_game_data.word)
-            return "Поздравляю!! Ты угадал слово. МОЛОДЕЦ", False
+            return "Поздравляю!! Ты угадал слово. МОЛОДЕЦ", False, photo_id
 
         elif sim in default_game_data.used_sims:
             return "Вы уже использовали этот символ", True
@@ -128,7 +135,7 @@ def game():
                 if "_" not in default_game_data.frm:
                     default_game_data.finish = False
                     write_user(default_game_data.user_id, default_game_data.word)
-                    return f"Поздравляю!! Я загадывала слово '{default_game_data.word}'", False
+                    return f"Поздравляю!! Я загадывала слово '{default_game_data.word}'", False, photo_id
 
                 else:
                     return default_game_data.frm, True
@@ -136,7 +143,8 @@ def game():
                 if default_game_data.kolvo == 3:
                     default_game_data.finish = False
                     write_user(default_game_data.user_id, default_game_data.word)
-                    return f"Вы пробовали слишком много раз :) Я загадывала слово '{default_game_data.word}'.", False
+                    return f"Вы пробовали слишком много раз :) Я загадывала слово '{default_game_data.word}'.", False,\
+                           photo_id
 
                 else:
                     default_game_data.used_sims.append(sim.lower())
