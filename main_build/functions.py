@@ -50,15 +50,18 @@ def write_user(user_name, town):
 
 def choose_city(user_id):
     find = False
-    data = json.load(open('users.json'))
-    for dict_ in data:
-        if dict_['name'] == user_id:
-            used_towns = dict_['towns']
-            flag = True
-            spis_word = collecting_cities_and_countries()
-            while flag:
-                word = random.choice(list(spis_word.keys()))
-                if word not in used_towns:
-                    flag = False
-                    return word
-                break
+    spis_word = collecting_cities_and_countries()
+    try:
+        data = json.load(open('users.json'))
+        for dict_ in data:
+            if dict_['name'] == user_id:
+                used_towns = dict_['towns']
+                flag = True
+                while flag:
+                    word = random.choice(list(spis_word.keys()))
+                    if word not in used_towns:
+                        flag = False
+                        return word
+    except:
+        word = random.choice(list(spis_word.keys()))
+        return word

@@ -72,6 +72,7 @@ def handle_dialog(resp, reqst):
                 resp['response']['text'] = 'Не расслышала имя. Повтори, пожалуйста!'
             # если нашли, то приветствуем пользователя.
             else:
+                print("ff")
                 default_game_data.sessionStorage[user_id]['first_name'] = frs_name
                 resp['response'][
                     'text'] = 'Приятно познакомиться, ' \
